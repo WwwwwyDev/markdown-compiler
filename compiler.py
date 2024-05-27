@@ -43,8 +43,8 @@ def filter_path(file_path):
 class SyntaxCheckError(Exception):
 
     def __init__(self, file_path, line, command, message):
-        file_path = filter_path(file_path)
-        self.message = f"[from \"{file_path}.md\" line:{line} command:{command}] " + message
+        file_path = os.path.realpath(filter_path(file_path))
+        self.message = f"[SyntaxCheckError] \nposition: from \"{file_path}.md\" line:{line} command:{command} \nmsg: " + message
 
     def __str__(self):
         return repr(self.message)
@@ -66,7 +66,7 @@ def syntax_check(file_path, root):
         if command.startswith("v-"):
             variable_key = command[2:]
             if variable_key not in variable:
-                raise SyntaxCheckError(file_path, match_line[i], command, f"variable \"{variable_key}\" is not defined")
+                raise SyntaxCheckError(file_path, match_line[i], command, f"variable \"{variable_key}\" is not defined in json")
         elif command.startswith("import-"):
             relative_path = filter_path(command[7:])
             _root = root
@@ -74,16 +74,20 @@ def syntax_check(file_path, root):
                 _root = str(Path(file_path).parent)
             else:
                 relative_path = relative_path[6:]
-            import_path = _root + "/" + relative_path
-            if ".." in import_path:
-                raise SyntaxCheckError(file_path, match_line[i], command, f"does not support \"..\" in import path")
+            if relative_path.startswith("/"):
+                import_path = relative_path
+            else:
+                import_path = _root + "/" + relative_path
             if import_path == file_path:
                 raise SyntaxCheckError(file_path, match_line[i], command, f"cannot import self file")
             if not os.path.exists(import_path + ".md"):
-                raise SyntaxCheckError(file_path, match_line[i], command, f"file \"{relative_path}.md\" does not exist")
+                raise SyntaxCheckError(file_path, match_line[i], command, f"file \"{os.path.realpath(import_path)}.md\" does not exist")
             if not os.path.exists(import_path + ".json"):
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        f"file \"{relative_path}.json\" does not exist")
+            if import_path.count("../") >= 15:
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       "maximum recursion depth exceeded")
             try:
                 syntax_check(import_path, root)
             except RecursionError:
@@ -92,15 +96,18 @@ def syntax_check(file_path, root):
         elif command.startswith("if-"):
             variable_key = command[3:]
             if variable_key not in variable:
-                raise SyntaxCheckError(file_path, match_line[i], command, f"if-variable \"{variable_key}\" is not defined")
-            end_stk.append(match)
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"if-variable \"{variable_key}\" is not defined in json")
+            end_stk.append(command)
         elif command.startswith("for-"):
             variable_key = command[4:]
             if variable_key not in variable:
-                raise SyntaxCheckError(file_path, match_line[i], command, f"for-variable \"{variable_key}\" is not defined")
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"for-variable \"{variable_key}\" is not defined in json")
             if not isinstance(variable[variable_key], list):
-                raise SyntaxCheckError(file_path, match_line[i], command, f"for-variable \"{variable_key}\" must be a list")
-            end_stk.append(match)
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"for-variable \"{variable_key}\" must be a list in json")
+            end_stk.append(command)
         elif command.startswith("end"):
             if len(end_stk) == 0:
                 raise SyntaxCheckError(file_path, match_line[i], command,
@@ -109,16 +116,7 @@ def syntax_check(file_path, root):
                 end_stk.pop(-1)
 
     if len(end_stk) != 0:
-        cnt = len(end_stk)
-        while cnt:
-            if get_command(match_list[i]).startswith("if-"):
-                cnt -= 1
-                break
-            elif get_command(match_list[i]).startswith("for-"):
-                cnt -= 1
-                break
-            i -= 1
-        command = get_command(match_list[i])
+        command = end_stk[-1]
         if command.startswith("if-"):
             raise SyntaxCheckError(file_path, match_line[i], command,
                                    "\"if\" does not match \"end\"")
@@ -134,7 +132,9 @@ def compile_file(file_path, is_need_syntax=True):
             syntax_check(file_path, root)
         except SyntaxCheckError as e:
             print(e.message)
+        except FileNotFoundError as e:
+            print(e)
 
 
 if __name__ == "__main__":
-    compile_file("./test/main.json")
+    compile_file("test/main")
