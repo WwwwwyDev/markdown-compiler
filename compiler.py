@@ -82,7 +82,8 @@ def syntax_check(file_path, root):
             if not os.path.exists(import_path + ".md"):
                 raise SyntaxCheckError(file_path, match_line[i], command, f"file \"{relative_path}.md\" does not exist")
             if not os.path.exists(import_path + ".json"):
-                raise SyntaxCheckError(file_path, match_line[i], command, f"file \"{relative_path}.json\" does not exist")
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"file \"{relative_path}.json\" does not exist")
             try:
                 syntax_check(import_path, root)
             except RecursionError:
@@ -91,12 +92,14 @@ def syntax_check(file_path, root):
         elif command.startswith("if-"):
             variable_key = command[3:]
             if variable_key not in variable:
-                raise SyntaxCheckError(file_path, match_line[i], command, f"variable \"{variable_key}\" is not defined")
+                raise SyntaxCheckError(file_path, match_line[i], command, f"if-variable \"{variable_key}\" is not defined")
             end_stk.append(match)
         elif command.startswith("for-"):
             variable_key = command[4:]
             if variable_key not in variable:
-                raise SyntaxCheckError(file_path, match_line[i], command, f"variable \"{variable_key}\" is not defined")
+                raise SyntaxCheckError(file_path, match_line[i], command, f"for-variable \"{variable_key}\" is not defined")
+            if not isinstance(variable[variable_key], list):
+                raise SyntaxCheckError(file_path, match_line[i], command, f"for-variable \"{variable_key}\" must be a list")
             end_stk.append(match)
         elif command.startswith("end"):
             if len(end_stk) == 0:
@@ -115,8 +118,13 @@ def syntax_check(file_path, root):
                 cnt -= 1
                 break
             i -= 1
-        raise SyntaxCheckError(file_path, match_line[i], get_command(match_list[i]),
-                               "\"if\" or \"for\" does not match \"end\"")
+        command = get_command(match_list[i])
+        if command.startswith("if-"):
+            raise SyntaxCheckError(file_path, match_line[i], command,
+                                   "\"if\" does not match \"end\"")
+        if command.startswith("for-"):
+            raise SyntaxCheckError(file_path, match_line[i], command,
+                                   "\"for\" does not match \"end\"")
 
 
 def compile_file(file_path, is_need_syntax=True):
