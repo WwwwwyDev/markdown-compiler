@@ -8,6 +8,9 @@ def generator_project(project_name):
     os.mkdir("./" + project_name)
     with open(f"./{project_name}/main.md", 'w') as f:
         pass
-    with open(f"./{project_name}/main.variable", 'w') as f:
+    with open(f"./{project_name}/main.json", 'w') as f:
         pass
 
+
+if __name__ == '__main__':
+    generator_project("test")
