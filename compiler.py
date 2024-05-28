@@ -25,7 +25,8 @@ def load_variable(name):
         return {}
 
 
-identifier_pattern = re.compile(r"<!--{[A-Za-z0-9-\s\/\.\$\#\[\]]+}-->")
+identifier_pattern = re.compile(r"<!--{.*?}-->")
+for_variable_pattern = re.compile(r"<!--{{.*?}}-->")
 
 
 def get_command(match):
@@ -107,7 +108,21 @@ def syntax_check(markdown, variable, root, file_path):
                                        f"for-variable \"{variable_key}\" is not defined in json")
             if not isinstance(variable[variable_key], list):
                 raise SyntaxCheckError(file_path, match_line[i], command,
-                                       f"for-variable \"{variable_key}\" must be a list in json")
+                                       f"for-variable \"{variable_key}\" must be a array[json] in json")
+            flag = False
+            keys = set()
+            for for_element in variable[variable_key]:
+                if not isinstance(for_element, dict):
+                    raise SyntaxCheckError(file_path, match_line[i], command,
+                                           f"for-variable \"{variable_key}\" must be a array[json] in json")
+                if not flag:
+                    for k in for_element.keys():
+                        keys.add(k)
+                    flag = True
+                for k in for_element.keys():
+                    if k not in keys:
+                        raise SyntaxCheckError(file_path, match_line[i], command,
+                                               f"the key of json in for-variable \"{variable_key}\" must be same")
             end_stk.append({"command": command, "i": i})
         elif command.startswith("end"):
             if len(end_stk) == 0:
@@ -163,6 +178,7 @@ def compile_markdown(markdown, variable, root, file_path):
                         if_match.span()[0] + offset - 1] == "\n" else 0
                     is_end_line = 1 if (markdown[start_pos + offset - 1] == "\n" and (end_pos + offset >= len(markdown)
                                         or markdown[end_pos + offset] == "\n")) else 0
+                    old_content_len = len(markdown[if_match.span()[1] + offset:start_pos + offset])
                     if condition["if"]:
                         up_content = markdown[if_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
                         up_content = compile_markdown(up_content, variable, root, file_path)
@@ -173,7 +189,35 @@ def compile_markdown(markdown, variable, root, file_path):
                         start_pos = if_match.span()[0] - is_start_line
                         end_pos = end_pos + is_end_line
                     markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
-                    offset += - len(match.group()) - len(if_match.group()) - is_end_line - is_start_line
+                    offset += len(up_content) - old_content_len - len(match.group()) - len(if_match.group())
+                elif "for" in condition.keys():
+                    for_match = condition["match"]
+                    for_variable = condition["for"]
+                    is_start_line = 1 if markdown[for_match.span()[1] + offset] == "\n" and markdown[
+                        for_match.span()[0] + offset - 1] == "\n" else 0
+                    is_end_line = 1 if (markdown[start_pos + offset - 1] == "\n" and (end_pos + offset >= len(markdown)
+                                                                                      or markdown[end_pos + offset] == "\n")) else 0
+                    total_up_content = ""
+                    old_content_len = len(markdown[for_match.span()[1] + offset:start_pos + offset])
+                    for i, for_element in enumerate(for_variable):
+                        up_content = markdown[
+                                     for_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
+                        up_content = compile_markdown(up_content, variable, root, file_path)
+                        temp_for_offset = 0
+                        for temp_for_match in re.finditer(for_variable_pattern, up_content):
+                            temp_for_variable_key = temp_for_match.group()[6:-5].strip()
+                            if temp_for_variable_key in for_element:
+                                temp_for_up_content = str(for_element[temp_for_variable_key])
+                                temp_for_start_pos, temp_for_end_pos = temp_for_match.span()
+                                up_content = up_content[:temp_for_start_pos + temp_for_offset] + temp_for_up_content + up_content[temp_for_end_pos + temp_for_offset:]
+                                temp_for_offset += len(temp_for_up_content) - len(temp_for_match.group())
+                        total_up_content += up_content
+                        if is_end_line and i != len(for_variable) - 1:
+                            total_up_content += "\n"
+                    start_pos = for_match.span()[0]
+                    end_pos = end_pos
+                    markdown = markdown[:start_pos + offset] + total_up_content + markdown[end_pos + offset:]
+                    offset += len(total_up_content) - old_content_len - len(match.group()) - len(for_match.group())
             end_stk.pop(-1)
     return markdown
 
