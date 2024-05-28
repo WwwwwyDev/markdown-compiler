@@ -1,44 +1,6 @@
 from pathlib import Path
-import re
-import json
+from util import *
 import os
-
-
-def load_markdown(name):
-    if not name.endswith('.md'):
-        name += '.md'
-    with open(name, 'r') as f:
-        markdown = f.read()
-    return markdown
-
-
-def load_variable(name):
-    if not name.endswith('.json'):
-        name += '.json'
-    with open(name, 'r') as f:
-        json_ = f.read()
-    if not json_:
-        return {}
-    try:
-        return json.loads(json_)
-    except:
-        return {}
-
-
-identifier_pattern = re.compile(r"<!--{.*?}-->")
-for_variable_pattern = re.compile(r"<!--{{.*?}}-->")
-
-
-def get_command(match):
-    return match.group()[5:-4].strip()
-
-
-def filter_path(file_path):
-    if file_path.endswith('.md'):
-        file_path = file_path[:-3]
-    elif file_path.endswith('.json'):
-        file_path = file_path[:-5]
-    return file_path
 
 
 class SyntaxCheckError(Exception):
@@ -177,10 +139,12 @@ def compile_markdown(markdown, variable, root, file_path):
                     is_start_line = 1 if markdown[if_match.span()[1] + offset] == "\n" and markdown[
                         if_match.span()[0] + offset - 1] == "\n" else 0
                     is_end_line = 1 if (markdown[start_pos + offset - 1] == "\n" and (end_pos + offset >= len(markdown)
-                                        or markdown[end_pos + offset] == "\n")) else 0
+                                                                                      or markdown[
+                                                                                          end_pos + offset] == "\n")) else 0
                     old_content_len = len(markdown[if_match.span()[1] + offset:start_pos + offset])
                     if condition["if"]:
-                        up_content = markdown[if_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
+                        up_content = markdown[
+                                     if_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
                         up_content = compile_markdown(up_content, variable, root, file_path)
                         start_pos = if_match.span()[0]
                         end_pos = end_pos
@@ -196,7 +160,8 @@ def compile_markdown(markdown, variable, root, file_path):
                     is_start_line = 1 if markdown[for_match.span()[1] + offset] == "\n" and markdown[
                         for_match.span()[0] + offset - 1] == "\n" else 0
                     is_end_line = 1 if (markdown[start_pos + offset - 1] == "\n" and (end_pos + offset >= len(markdown)
-                                                                                      or markdown[end_pos + offset] == "\n")) else 0
+                                                                                      or markdown[
+                                                                                          end_pos + offset] == "\n")) else 0
                     total_up_content = ""
                     old_content_len = len(markdown[for_match.span()[1] + offset:start_pos + offset])
                     for i, for_element in enumerate(for_variable):
@@ -209,7 +174,9 @@ def compile_markdown(markdown, variable, root, file_path):
                             if temp_for_variable_key in for_element:
                                 temp_for_up_content = str(for_element[temp_for_variable_key])
                                 temp_for_start_pos, temp_for_end_pos = temp_for_match.span()
-                                up_content = up_content[:temp_for_start_pos + temp_for_offset] + temp_for_up_content + up_content[temp_for_end_pos + temp_for_offset:]
+                                up_content = up_content[
+                                             :temp_for_start_pos + temp_for_offset] + temp_for_up_content + up_content[
+                                                                                                            temp_for_end_pos + temp_for_offset:]
                                 temp_for_offset += len(temp_for_up_content) - len(temp_for_match.group())
                         total_up_content += up_content
                         if is_end_line and i != len(for_variable) - 1:
