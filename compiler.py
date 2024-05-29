@@ -55,16 +55,13 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
             if not os.path.exists(import_path + ".md"):
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        f"file \"{os.path.realpath(import_path)}.md\" does not exist")
-            if not os.path.exists(import_path + ".json"):
-                raise SyntaxCheckError(file_path, match_line[i], command,
-                                       f"file \"{relative_path}.json\" does not exist")
             if import_path.count("../") >= 128:
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        "maximum recursion depth exceeded")
             try:
                 _markdown = load_markdown(import_path)
-                _variable = load_variable(import_path)
-                syntax_check(_markdown, _variable, root, import_path, max_depth + 1)
+                variable.update(load_variable(import_path))
+                syntax_check(_markdown, variable, root, import_path, max_depth + 1)
             except RecursionError:
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        "maximum recursion depth exceeded")
@@ -122,14 +119,14 @@ def compile_markdown(markdown, variable, root, file_path):
         command = get_command(match)
         if "{{" in match.group() and "}}" in match.group():
             continue
-        if command.startswith("v-"):
+        if not end_stk and command.startswith("v-"):
             variable_key = get_command_value(command)
             v = variable[variable_key]
             up_content = str(v)
             start_pos, end_pos = match.span()
             markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
             offset += len(up_content) - len(match.group())
-        elif command.startswith("import-"):
+        elif not end_stk and command.startswith("import-"):
             relative_path = filter_path(get_command_value(command))
             _root = root
             if not relative_path.startswith("$root/"):
@@ -141,8 +138,8 @@ def compile_markdown(markdown, variable, root, file_path):
             else:
                 import_path = _root + "/" + relative_path
             _markdown = load_markdown(import_path)
-            _variable = load_variable(import_path)
-            up_content = compile_markdown(_markdown, _variable, root, import_path)
+            variable.update(load_variable(import_path))
+            up_content = compile_markdown(_markdown, variable, root, import_path)
             start_pos, end_pos = match.span()
             markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
             offset += len(up_content) - len(match.group())
@@ -209,6 +206,7 @@ def compile_markdown(markdown, variable, root, file_path):
                                                                                                             temp_for_end_pos + temp_for_offset:]
                                 temp_for_offset += len(temp_for_up_content) - len(temp_for_match.group())
                         total_up_content += up_content
+
                         if is_end_line and i != len(for_variable) - 1:
                             total_up_content += "\n"
                     start_pos = for_match.span()[0]
@@ -239,11 +237,9 @@ def compile_file_or_dir(path, name="build.md"):
             f.write(res)
     except SyntaxCheckError as e:
         log(e.message)
-        exit(0)
+        return
     except FileNotFoundError as e:
         log(str(e))
-        exit(0)
+        return
 
 
-if __name__ == "__main__":
-    compile_file_or_dir("test2")

@@ -2,7 +2,7 @@ import argparse
 from gen import generate_project
 from compiler import compile_file_or_dir
 
-__VERSION__ = '%(prog)s v0.1-beta'
+__VERSION__ = '%(prog)s v0.0.1-beta'
 
 parser = argparse.ArgumentParser(prog='markdown-compiler',
                                  description='Writing a Markdown like programming',

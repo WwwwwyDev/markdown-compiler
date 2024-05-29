@@ -1,6 +1,6 @@
 import re
 import json
-
+import os
 
 def load_markdown(name):
     if not name.endswith('.md'):
@@ -13,6 +13,8 @@ def load_markdown(name):
 def load_variable(name):
     if not name.endswith('.json'):
         name += '.json'
+    if not os.path.exists(name):
+        return {}
     with open(name, 'r') as f:
         json_ = f.read()
     if not json_:
@@ -41,6 +43,7 @@ def filter_path(file_path):
     elif file_path.endswith('.json'):
         file_path = file_path[:-5]
     return file_path
+
 
 def log(text):
     print('\033[31m' + text + '\033[0m')
