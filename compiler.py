@@ -13,7 +13,7 @@ class SyntaxCheckError(Exception):
         return repr(self.message)
 
 
-def syntax_check(markdown, variable, root, file_path):
+def syntax_check(markdown, variable, root, file_path, max_depth=0):
     match_list = [*re.finditer(identifier_pattern, markdown)]
     match_line = []
     for match in match_list:
@@ -23,13 +23,24 @@ def syntax_check(markdown, variable, root, file_path):
     end_stk = []
     for i, match in enumerate(match_list):
         command = get_command(match)
+        if command.count("-") > 1:
+            raise SyntaxCheckError(file_path, match_line[i], command,
+                                   f"the number of \"-\" is over 1")
         if command.startswith("v-"):
-            variable_key = command[2:]
+            variable_key = get_command_value(command)
             if variable_key not in variable:
                 raise SyntaxCheckError(file_path, match_line[i], command,
-                                       f"variable \"{variable_key}\" is not defined in json")
+                                       f"variable \"{variable_key}\" is not defined in corresponding json")
         elif command.startswith("import-"):
-            relative_path = filter_path(command[7:])
+            if max_depth > 128:
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       "maximum recursion depth exceeded")
+            start_pos, end_pos = match.span()
+            if (start_pos > 0 and markdown[start_pos - 1] != "\n") or (
+                    end_pos <= len(markdown) - 1 and markdown[end_pos] != "\n"):
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"import must be exclusive to one line")
+            relative_path = filter_path(get_command_value(command))
             _root = root
             if not relative_path.startswith("$root/"):
                 _root = str(Path(file_path).parent)
@@ -47,36 +58,36 @@ def syntax_check(markdown, variable, root, file_path):
             if not os.path.exists(import_path + ".json"):
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        f"file \"{relative_path}.json\" does not exist")
-            if import_path.count("../") >= 15:
+            if import_path.count("../") >= 128:
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        "maximum recursion depth exceeded")
             try:
                 _markdown = load_markdown(import_path)
                 _variable = load_variable(import_path)
-                syntax_check(_markdown, _variable, root, import_path)
+                syntax_check(_markdown, _variable, root, import_path, max_depth + 1)
             except RecursionError:
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        "maximum recursion depth exceeded")
         elif command.startswith("if-"):
-            variable_key = command[3:]
+            variable_key = get_command_value(command)
             if variable_key not in variable:
                 raise SyntaxCheckError(file_path, match_line[i], command,
-                                       f"if-variable \"{variable_key}\" is not defined in json")
+                                       f"if-variable \"{variable_key}\" is not defined in corresponding json")
             end_stk.append({"command": command, "i": i})
         elif command.startswith("for-"):
-            variable_key = command[4:]
+            variable_key = get_command_value(command)
             if variable_key not in variable:
                 raise SyntaxCheckError(file_path, match_line[i], command,
-                                       f"for-variable \"{variable_key}\" is not defined in json")
+                                       f"for-variable \"{variable_key}\" is not defined in corresponding json")
             if not isinstance(variable[variable_key], list):
                 raise SyntaxCheckError(file_path, match_line[i], command,
-                                       f"for-variable \"{variable_key}\" must be a array[json] in json")
+                                       f"for-variable \"{variable_key}\" must be a array[json] in corresponding json")
             flag = False
             keys = set()
             for for_element in variable[variable_key]:
                 if not isinstance(for_element, dict):
                     raise SyntaxCheckError(file_path, match_line[i], command,
-                                           f"for-variable \"{variable_key}\" must be a array[json] in json")
+                                           f"for-variable \"{variable_key}\" must be a array[json] in corresponding json")
                 if not flag:
                     for k in for_element.keys():
                         keys.add(k)
@@ -109,22 +120,41 @@ def compile_markdown(markdown, variable, root, file_path):
     end_stk = []
     for match in re.finditer(identifier_pattern, markdown):
         command = get_command(match)
+        if "{{" in match.group() and "}}" in match.group():
+            continue
         if command.startswith("v-"):
-            variable_key = command[2:]
+            variable_key = get_command_value(command)
             v = variable[variable_key]
             up_content = str(v)
             start_pos, end_pos = match.span()
             markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
             offset += len(up_content) - len(match.group())
+        elif command.startswith("import-"):
+            relative_path = filter_path(get_command_value(command))
+            _root = root
+            if not relative_path.startswith("$root/"):
+                _root = str(Path(file_path).parent)
+            else:
+                relative_path = relative_path[6:]
+            if relative_path.startswith("/"):
+                import_path = relative_path
+            else:
+                import_path = _root + "/" + relative_path
+            _markdown = load_markdown(import_path)
+            _variable = load_variable(import_path)
+            up_content = compile_markdown(_markdown, _variable, root, import_path)
+            start_pos, end_pos = match.span()
+            markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
+            offset += len(up_content) - len(match.group())
         elif command.startswith("if-"):
-            variable_key = command[3:]
+            variable_key = get_command_value(command)
             v = variable[variable_key]
             end_stk.append({
                 "if": v,
                 "match": match
             })
         elif command.startswith("for-"):
-            variable_key = command[4:]
+            variable_key = get_command_value(command)
             v = variable[variable_key]
             end_stk.append({
                 "for": v,
@@ -189,20 +219,31 @@ def compile_markdown(markdown, variable, root, file_path):
     return markdown
 
 
-if __name__ == "__main__":
-    _file_path = "test/main"
-    _file_path = filter_path(_file_path)
-    _markdown_ = load_markdown(_file_path)
-    _variable_ = load_variable(_file_path)
-    _root_ = str(Path(_file_path).parent)
+def compile_file_or_dir(path, name="build.md"):
     try:
-        syntax_check(_markdown_, _variable_, _root_, _file_path)
+        path = Path(path)
+        if path.is_dir():
+            path = path.joinpath("main.md")
+        if not path.exists():
+            log("cannot find the file {}".format(str(path)))
+        file_path = filter_path(str(path))
+        markdown = load_markdown(file_path)
+        variable = load_variable(file_path)
+        root = str(path.parent)
+        syntax_check(markdown, variable, root, file_path)
+        res = compile_markdown(markdown, variable, root, file_path)
+        build_dir = path.parent.joinpath("dist")
+        if not build_dir.exists():
+            build_dir.mkdir()
+        with open(build_dir.joinpath(name), "w") as f:
+            f.write(res)
     except SyntaxCheckError as e:
-        print('\033[31m' + e.message + '\033[0m')
+        log(e.message)
         exit(0)
     except FileNotFoundError as e:
-        print('\033[0m' + e + '\033[0m')
+        log(str(e))
         exit(0)
-    res = compile_markdown(_markdown_, _variable_, _root_, _file_path)
-    with open("test.md", "w") as f:
-        f.write(res)
+
+
+if __name__ == "__main__":
+    compile_file_or_dir("test2")
