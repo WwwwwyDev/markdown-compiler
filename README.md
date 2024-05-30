@@ -23,7 +23,7 @@ Writing a Markdown like programming
 
 ## introduction
 
-When the markup text is too long, it may make it difficult to maintain. Using mkdc, you can write a markup like programming, which supports variables, conditional judgment, loops, and modularity.
+When the markdown text is too long, it may make it difficult to maintain. Using mkdc, you can write a markdown like programming, which supports variables, conditional judgment, loops, and modularity.
 
 ## installing
 
