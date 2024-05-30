@@ -224,6 +224,7 @@ def compile_file_or_dir(path, name="build.md"):
             path = path.joinpath("main.md")
         if not path.exists():
             log("cannot find the file {}".format(str(path)))
+            return
         file_path = filter_path(str(path))
         markdown = load_markdown(file_path)
         variable = load_variable(file_path)
