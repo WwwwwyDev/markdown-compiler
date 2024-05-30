@@ -30,7 +30,7 @@ layout:
 ### 安装
 
 * 从下面的链接下载相应系统的mkdc\
-  [Download](https://github.com/WwwwwyDev/markdown-compiler/releases/tag/v0.0.1-beta)
+[github](https://github.com/WwwwwyDev/markdown-compiler/releases/latest) | [gitee](https://gitee.com/wu_wen_yi/markdown-compiler/releases/latest)
 * 解压它，并将赋予它可执行权限，将它添加到环境变量中
 
 ### 快速开始
