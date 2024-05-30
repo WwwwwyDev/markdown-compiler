@@ -22,6 +22,9 @@ Writing a Markdown like programming
 
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest\&query=%24.name\&label=version\&link=https%3A%2F%2Fgithub.com%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/markdown-compiler)](https://github.com/WwwwwyDev/markdown-compiler/stargazers)
 
+{% embed url="https://github.com/WwwwwyDev/markdown-compiler" %}
+
+{% embed url="https://gitee.com/wu_wen_yi/markdown-compiler" %}
 
 ### introduction
 
@@ -30,7 +33,7 @@ When the markdown text is too long, it may make it difficult to maintain. Using 
 ### installing
 
 * Download the corresponding system's mkdc from the link below\
-[github](https://github.com/WwwwwyDev/markdown-compiler/releases/latest) | [gitee](https://gitee.com/wu_wen_yi/markdown-compiler/releases/latest)
+  [github](https://github.com/WwwwwyDev/markdown-compiler/releases/latest) | [gitee](https://gitee.com/wu\_wen\_yi/markdown-compiler/releases/latest)
 * Decompress it and grant it executable permissions, add it to the environment variable
 
 ### quickly start
