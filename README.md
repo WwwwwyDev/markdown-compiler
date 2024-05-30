@@ -13,7 +13,7 @@ Writing a Markdown like programming
 <!-- prettier-ignore-end -->
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.1-blue" alt="version">
+  <img src="https://img.shields.io/badge/version-0.0.1 beta-blue" alt="version">
   <a href="https://github.com/WwwwwyDev/markdown-compiler/stargazers"><img src="https://img.shields.io/github/stars/WwwwwyDev/markdown-compiler" alt="GitHub stars"style="max-width: 100%;">
   </a>
   <br/>
@@ -27,7 +27,9 @@ When the markup text is too long, it may make it difficult to maintain. Using mk
 
 ## installing
 
-
+- Download the corresponding system's mkdc from the link below \
+[Download](https://github.com/WwwwwyDev/markdown-compiler/releases/tag/v0.0.1-beta)
+- Decompress it and grant it executable permissions, add it to the environment variable
 
 ## quickly start
 ```shell
