@@ -9,7 +9,7 @@
 
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable-next-line MD036 -->
-Writing a Markdown like programming
+像编程一样编写markdown文本
 <!-- prettier-ignore-end -->
 
 <p align="center">
@@ -21,26 +21,18 @@ Writing a Markdown like programming
 </div>
 
 
-## introduction
+## 介绍
 
-When the markup text is too long, it may make it difficult to maintain. Using mkdc, you can write a markup like programming, which supports variables, conditional judgment, loops, and modularity.
+当markdown文本过长时，可能会导致维护变得困难。使用mkdc，您可以像编程一样撰写markdown，它支持变量、条件判断、循环和模块化。
 
-## installing
+## 安装
 
-- Download the corresponding system's mkdc from the link below \
+- 从下面的链接下载相应系统的mkdc \
 [Download](https://github.com/WwwwwyDev/markdown-compiler/releases/tag/v0.0.1-beta)
-- Decompress it and grant it executable permissions, add it to the environment variable
+- 解压它，并将赋予它可执行权限，将它添加到环境变量中
 
-## quickly start
+## 快速开始
 ```shell
 mkdc init hello-world
 mkdc build hello-word
 ```
-
-## Documenting
-If you are interested and would like to see more detailed documentation, please click on the link below.
-
-[中文](https://wwydev.gitbook.io/mkdc-zh "中文文档")|[English](https://wwydev.gitbook.io/mkdc "English Document")
-
-## Contributing
-Please submit pull requests to the develop branch
