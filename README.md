@@ -36,11 +36,3 @@ When the markup text is too long, it may make it difficult to maintain. Using mk
 mkdc init hello-world
 mkdc build hello-word
 ```
-
-## Documenting
-If you are interested and would like to see more detailed documentation, please click on the link below.
-
-[中文](https://wwydev.gitbook.io/mkdc-zh "中文文档")|[English](https://wwydev.gitbook.io/mkdc "English Document")
-
-## Contributing
-Please submit pull requests to the develop branch
