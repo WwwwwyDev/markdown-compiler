@@ -13,7 +13,7 @@ Writing a Markdown like programming
 <!-- prettier-ignore-end -->
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.0.1 beta-blue" alt="version">
+    <img alt="Dynamic JSON Badge" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest&query=%24.name&label=version&link=https%3A%2F%2Fgithub.com%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest">
   <a href="https://github.com/WwwwwyDev/markdown-compiler/stargazers"><img src="https://img.shields.io/github/stars/WwwwwyDev/markdown-compiler" alt="GitHub stars"style="max-width: 100%;">
   </a>
   <br/>
