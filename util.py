@@ -2,6 +2,7 @@ import re
 import json
 import os
 
+
 def load_markdown(name):
     if not name.endswith('.md'):
         name += '.md'
