@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD033 MD041 -->
 <p align="center">
-  <a href="https://github.com/WwwwwyDev/markdown-compiler"><img src="https://s2.loli.net/2024/05/30/5uNIUdqkG1CpmQa.png" alt="markdown-compiler"></a>
+  <a href="https://github.com/WwwwwyDev/markdown-compiler"><img src="https://s2.loli.net/2024/05/30/5uNIUdqkG1CpmQa.png" alt="markdown-compiler" style="width:50%; height:50%"></a>
 </p>
 
 <div align="center">
