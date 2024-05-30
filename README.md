@@ -20,7 +20,7 @@ layout:
 
 Writing a Markdown like programming
 
-![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest\&query=%24.name\&label=version\&link=https%3A%2F%2Fgithub.com%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/markdown-compiler)](https://github.com/WwwwwyDev/markdown-compiler/stargazers)\
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest\&query=%24.name\&label=version\&link=https%3A%2F%2Fgithub.com%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/markdown-compiler)](https://github.com/WwwwwyDev/markdown-compiler/stargazers)
 
 
 ### introduction
