@@ -22,6 +22,9 @@ layout:
 
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest\&query=%24.name\&label=version\&link=https%3A%2F%2Fgithub.com%2FWwwwwyDev%2Fmarkdown-compiler%2Freleases%2Flatest) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/markdown-compiler)](https://github.com/WwwwwyDev/markdown-compiler/stargazers)
 
+{% embed url="https://github.com/WwwwwyDev/markdown-compiler" %}
+
+{% embed url="https://gitee.com/wu_wen_yi/markdown-compiler" %}
 
 ### 介绍
 
@@ -30,7 +33,7 @@ layout:
 ### 安装
 
 * 从下面的链接下载相应系统的mkdc\
-[github](https://github.com/WwwwwyDev/markdown-compiler/releases/latest) | [gitee](https://gitee.com/wu_wen_yi/markdown-compiler/releases/latest)
+  [github](https://github.com/WwwwwyDev/markdown-compiler/releases/latest) | [gitee](https://gitee.com/wu\_wen\_yi/markdown-compiler/releases/latest)
 * 解压它，并将赋予它可执行权限，将它添加到环境变量中
 
 ### 快速开始
