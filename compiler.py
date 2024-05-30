@@ -60,8 +60,8 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
                                        "maximum recursion depth exceeded")
             try:
                 _markdown = load_markdown(import_path)
-                variable.update(load_variable(import_path))
-                syntax_check(_markdown, variable, root, import_path, max_depth + 1)
+                _variable = {**variable, **load_variable(import_path)}
+                syntax_check(_markdown, _variable, root, import_path, max_depth + 1)
             except RecursionError:
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        "maximum recursion depth exceeded")
@@ -138,8 +138,8 @@ def compile_markdown(markdown, variable, root, file_path):
             else:
                 import_path = _root + "/" + relative_path
             _markdown = load_markdown(import_path)
-            variable.update(load_variable(import_path))
-            up_content = compile_markdown(_markdown, variable, root, import_path)
+            _variable = {**variable, **load_variable(import_path)}
+            up_content = compile_markdown(_markdown, _variable, root, import_path)
             start_pos, end_pos = match.span()
             markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
             offset += len(up_content) - len(match.group())
@@ -163,8 +163,8 @@ def compile_markdown(markdown, variable, root, file_path):
                 start_pos, end_pos = match.span()
                 if "if" in condition.keys():
                     if_match = condition["match"]
-                    is_start_line = 1 if markdown[if_match.span()[1] + offset] == "\n" and markdown[
-                        if_match.span()[0] + offset - 1] == "\n" else 0
+                    is_start_line = 1 if (markdown[if_match.span()[1] + offset] == "\n") and (if_match.span()[0] == 0 or markdown[
+                        if_match.span()[0] + offset - 1] == "\n") else 0
                     is_end_line = 1 if (markdown[start_pos + offset - 1] == "\n" and (end_pos + offset >= len(markdown)
                                                                                       or markdown[
                                                                                           end_pos + offset] == "\n")) else 0
@@ -184,8 +184,8 @@ def compile_markdown(markdown, variable, root, file_path):
                 elif "for" in condition.keys():
                     for_match = condition["match"]
                     for_variable = condition["for"]
-                    is_start_line = 1 if markdown[for_match.span()[1] + offset] == "\n" and markdown[
-                        for_match.span()[0] + offset - 1] == "\n" else 0
+                    is_start_line = 1 if markdown[for_match.span()[1] + offset] == "\n" and (for_match.span()[0] == 0 or markdown[
+                        for_match.span()[0] + offset - 1] == "\n") else 0
                     is_end_line = 1 if (markdown[start_pos + offset - 1] == "\n" and (end_pos + offset >= len(markdown)
                                                                                       or markdown[
                                                                                           end_pos + offset] == "\n")) else 0
@@ -194,7 +194,6 @@ def compile_markdown(markdown, variable, root, file_path):
                     for i, for_element in enumerate(for_variable):
                         up_content = markdown[
                                      for_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
-                        up_content = compile_markdown(up_content, variable, root, file_path)
                         temp_for_offset = 0
                         for temp_for_match in re.finditer(for_variable_pattern, up_content):
                             temp_for_variable_key = temp_for_match.group()[6:-5].strip()
@@ -205,6 +204,7 @@ def compile_markdown(markdown, variable, root, file_path):
                                              :temp_for_start_pos + temp_for_offset] + temp_for_up_content + up_content[
                                                                                                             temp_for_end_pos + temp_for_offset:]
                                 temp_for_offset += len(temp_for_up_content) - len(temp_for_match.group())
+                        up_content = compile_markdown(up_content, variable, root, file_path)
                         total_up_content += up_content
 
                         if is_end_line and i != len(for_variable) - 1:
@@ -224,6 +224,7 @@ def compile_file_or_dir(path, name="build.md"):
             path = path.joinpath("main.md")
         if not path.exists():
             log("cannot find the file {}".format(str(path)))
+            return
         file_path = filter_path(str(path))
         markdown = load_markdown(file_path)
         variable = load_variable(file_path)
