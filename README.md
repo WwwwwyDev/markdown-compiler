@@ -28,7 +28,7 @@ When the markup text is too long, it may make it difficult to maintain. Using mk
 ## installing
 
 - Download the corresponding system's mkdc from the link below \
-[Download](https://github.com/WwwwwyDev/markdown-compiler/releases/tag/v0.0.1-beta)
+[github](https://github.com/WwwwwyDev/markdown-compiler/releases/latest) | [gitee](https://gitee.com/wu_wen_yi/markdown-compiler/releases/latest)
 - Decompress it and grant it executable permissions, add it to the environment variable
 
 ## quickly start
