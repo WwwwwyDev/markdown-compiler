@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from pathlib import Path
 from util import *
 import os
@@ -93,7 +94,7 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
                     if k not in keys:
                         raise SyntaxCheckError(file_path, match_line[i], command,
                                                f"the key of json in for-variable \"{variable_key}\" must be same")
-            end_stk.append({"command": command, "i": i})
+            end_stk.append({"command": command, "i": i, "k": keys})
         elif command.startswith("end"):
             if len(end_stk) == 0:
                 raise SyntaxCheckError(file_path, match_line[i], command,
@@ -144,15 +145,21 @@ def compile_markdown(markdown, variable, root, file_path):
             markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
             offset += len(up_content) - len(match.group())
         elif command.startswith("if-"):
-            variable_key = get_command_value(command)
-            v = variable[variable_key]
+            if len(end_stk) <= 1:
+                variable_key = get_command_value(command)
+                v = variable[variable_key]
+            else:
+                v = False
             end_stk.append({
                 "if": v,
                 "match": match
             })
         elif command.startswith("for-"):
-            variable_key = get_command_value(command)
-            v = variable[variable_key]
+            if len(end_stk) <= 1:
+                variable_key = get_command_value(command)
+                v = variable[variable_key]
+            else:
+                v = []
             end_stk.append({
                 "for": v,
                 "match": match
@@ -177,7 +184,7 @@ def compile_markdown(markdown, variable, root, file_path):
                         end_pos = end_pos
                     else:
                         up_content = ""
-                        start_pos = if_match.span()[0] - is_start_line
+                        start_pos = if_match.span()[0]
                         end_pos = end_pos + is_end_line
                     markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
                     offset += len(up_content) - old_content_len - len(match.group()) - len(if_match.group())
@@ -204,9 +211,9 @@ def compile_markdown(markdown, variable, root, file_path):
                                              :temp_for_start_pos + temp_for_offset] + temp_for_up_content + up_content[
                                                                                                             temp_for_end_pos + temp_for_offset:]
                                 temp_for_offset += len(temp_for_up_content) - len(temp_for_match.group())
-                        up_content = compile_markdown(up_content, variable, root, file_path)
+                        _variable = {**variable, **for_element}
+                        up_content = compile_markdown(up_content, _variable, root, file_path)
                         total_up_content += up_content
-
                         if is_end_line and i != len(for_variable) - 1:
                             total_up_content += "\n"
                     start_pos = for_match.span()[0]
@@ -222,9 +229,6 @@ def compile_file_or_dir(path, name="build.md"):
         path = Path(path)
         if path.is_dir():
             path = path.joinpath("main.md")
-        if not path.exists():
-            log("cannot find the file {}".format(str(path)))
-            return
         file_path = filter_path(str(path))
         markdown = load_markdown(file_path)
         variable = load_variable(file_path)
@@ -240,7 +244,10 @@ def compile_file_or_dir(path, name="build.md"):
         log(e.message)
         return
     except FileNotFoundError as e:
-        log(str(e))
+        log("[FileNotFoundError]: " + str(e))
+        return
+    except JSONDecodeError as e:
+        log("[JSONDecodeError]: " + str(e))
         return
 
 

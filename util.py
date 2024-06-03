@@ -20,10 +20,7 @@ def load_variable(name):
         json_ = f.read()
     if not json_:
         return {}
-    try:
-        return json.loads(json_)
-    except:
-        return {}
+    return json.loads(json_)
 
 
 identifier_pattern = re.compile(r"<!--{.*?}-->")
