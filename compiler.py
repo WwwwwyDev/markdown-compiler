@@ -247,7 +247,8 @@ def compile_file_or_dir(path, name="build.md"):
         log("[FileNotFoundError]: " + str(e))
         return
     except JSONDecodeError as e:
-        log("[JSONDecodeError]: " + str(e))
+        msg = f"[JSONDecodeError] \nposition: from \"{os.path.realpath(filter_path(file_path))}.md\nmsg: " + str(e)
+        log(msg)
         return
 
 
