@@ -79,7 +79,7 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        f"ifn-variable \"{variable_key}\" is not defined in corresponding json")
             end_stk.append({"command": command, "i": i})
-        elif command.startswith("forn-"):
+        elif command.startswith("for-"):
             variable_key = get_command_value(command)
             if variable_key not in variable:
                 raise SyntaxCheckError(file_path, match_line[i], command,
@@ -170,7 +170,7 @@ def compile_markdown(markdown, variable, root, file_path):
             markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
             offset += len(up_content) - len(match.group())
         elif command.startswith("if-"):
-            if len(end_stk) <= 1:
+            if len(end_stk) < 1:
                 variable_key = get_command_value(command)
                 v = variable[variable_key]
             else:
@@ -180,7 +180,7 @@ def compile_markdown(markdown, variable, root, file_path):
                 "match": match
             })
         elif command.startswith("ifn-"):
-            if len(end_stk) <= 1:
+            if len(end_stk) < 1:
                 variable_key = get_command_value(command)
                 v = variable[variable_key]
             else:
@@ -190,7 +190,7 @@ def compile_markdown(markdown, variable, root, file_path):
                 "match": match
             })
         elif command.startswith("for-"):
-            if len(end_stk) <= 1:
+            if len(end_stk) < 1:
                 variable_key = get_command_value(command)
                 v = variable[variable_key]
             else:
@@ -200,7 +200,7 @@ def compile_markdown(markdown, variable, root, file_path):
                 "match": match
             })
         elif command.startswith("forn-"):
-            if len(end_stk) <= 1:
+            if len(end_stk) < 1:
                 num = int(get_command_value(command))
                 v = [{} for _ in range(num)]
             else:
