@@ -34,7 +34,7 @@ layout:
 
 在markdown文件中使用条件判断，需要以 "if-" 或者"ifn-"指令开头，并且以\<!--{end}-->结尾
 
-注："ifn-"即将对应变量逻辑取反
+注："ifn-"指令会将对应变量逻辑取反
 
 {% code title="main.md" %}
 ```markdown
