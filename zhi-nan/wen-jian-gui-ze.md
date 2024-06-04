@@ -45,6 +45,8 @@ markdown对应其相同名字的json文件，当编译时，会在json文件中�
 ```markdown
 <!--{v-your_variable}-->
 <!--{if-your_variable}-->
+<!--{ifn-your_variable}-->
 <!--{for-your_variable}-->
+<!--{forn-your_variable}-->
 <!--{import-your_markdown_file_path}-->
 ```
