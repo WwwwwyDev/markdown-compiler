@@ -1,8 +1,9 @@
 import argparse
 from gen import generate_project
 from compiler import compile_file_or_dir
+from __version__ import __version__
 
-__VERSION__ = '%(prog)s v0.0.1-beta'
+__VERSION__ = '%(prog)s ' + __version__
 
 parser = argparse.ArgumentParser(prog='markdown-compiler',
                                  description='Writing a Markdown like programming',

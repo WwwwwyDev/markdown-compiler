@@ -1,3 +1,4 @@
+import copy
 from json import JSONDecodeError
 from pathlib import Path
 from util import *
@@ -72,7 +73,13 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
                 raise SyntaxCheckError(file_path, match_line[i], command,
                                        f"if-variable \"{variable_key}\" is not defined in corresponding json")
             end_stk.append({"command": command, "i": i})
-        elif command.startswith("for-"):
+        elif command.startswith("ifn-"):
+            variable_key = get_command_value(command)
+            if variable_key not in variable:
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"ifn-variable \"{variable_key}\" is not defined in corresponding json")
+            end_stk.append({"command": command, "i": i})
+        elif command.startswith("forn-"):
             variable_key = get_command_value(command)
             if variable_key not in variable:
                 raise SyntaxCheckError(file_path, match_line[i], command,
@@ -82,6 +89,7 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
                                        f"for-variable \"{variable_key}\" must be a array[json] in corresponding json")
             flag = False
             keys = set()
+            for_element = {}
             for for_element in variable[variable_key]:
                 if not isinstance(for_element, dict):
                     raise SyntaxCheckError(file_path, match_line[i], command,
@@ -94,13 +102,24 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
                     if k not in keys:
                         raise SyntaxCheckError(file_path, match_line[i], command,
                                                f"the key of json in for-variable \"{variable_key}\" must be same")
-            end_stk.append({"command": command, "i": i, "k": keys})
+            end_stk.append({"command": command, "i": i, "variable_bak": copy.deepcopy(variable)})
+            variable.update(for_element)
+        elif command.startswith("forn-"):
+            num = get_command_value(command)
+            try:
+                int(num)
+            except Exception as e:
+                raise SyntaxCheckError(file_path, match_line[i], command,
+                                       f"forn-variable \"{variable_key}\" must be a number of int")
+            end_stk.append({"command": command, "i": i})
         elif command.startswith("end"):
             if len(end_stk) == 0:
                 raise SyntaxCheckError(file_path, match_line[i], command,
-                                       "\"end\" does not match \"if\" or \"for\"")
+                                       "\"end\" does not match \"if\" or \"for\" or \"ifn\" or \"forn\"")
             if len(end_stk) > 0:
-                end_stk.pop(-1)
+                end = end_stk.pop(-1)
+                if "variable_bak" in end:
+                    variable = end["variable_bak"]
 
     if len(end_stk) != 0:
         command = end_stk[-1]["command"]
@@ -108,9 +127,15 @@ def syntax_check(markdown, variable, root, file_path, max_depth=0):
         if command.startswith("if-"):
             raise SyntaxCheckError(file_path, match_line[i], command,
                                    "\"if\" does not match \"end\"")
+        if command.startswith("ifn-"):
+            raise SyntaxCheckError(file_path, match_line[i], command,
+                                   "\"ifn\" does not match \"end\"")
         if command.startswith("for-"):
             raise SyntaxCheckError(file_path, match_line[i], command,
                                    "\"for\" does not match \"end\"")
+        if command.startswith("forn-"):
+            raise SyntaxCheckError(file_path, match_line[i], command,
+                                   "\"forn\" does not match \"end\"")
 
 
 def compile_markdown(markdown, variable, root, file_path):
@@ -154,10 +179,30 @@ def compile_markdown(markdown, variable, root, file_path):
                 "if": v,
                 "match": match
             })
+        elif command.startswith("ifn-"):
+            if len(end_stk) <= 1:
+                variable_key = get_command_value(command)
+                v = variable[variable_key]
+            else:
+                v = False
+            end_stk.append({
+                "if": not v,
+                "match": match
+            })
         elif command.startswith("for-"):
             if len(end_stk) <= 1:
                 variable_key = get_command_value(command)
                 v = variable[variable_key]
+            else:
+                v = []
+            end_stk.append({
+                "for": v,
+                "match": match
+            })
+        elif command.startswith("forn-"):
+            if len(end_stk) <= 1:
+                num = int(get_command_value(command))
+                v = [{} for _ in range(num)]
             else:
                 v = []
             end_stk.append({
@@ -181,11 +226,9 @@ def compile_markdown(markdown, variable, root, file_path):
                                      if_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
                         up_content = compile_markdown(up_content, variable, root, file_path)
                         start_pos = if_match.span()[0]
-                        end_pos = end_pos
                     else:
                         up_content = ""
                         start_pos = if_match.span()[0]
-                        end_pos = end_pos + is_end_line
                     markdown = markdown[:start_pos + offset] + up_content + markdown[end_pos + offset:]
                     offset += len(up_content) - old_content_len - len(match.group()) - len(if_match.group())
                 elif "for" in condition.keys():
@@ -201,20 +244,10 @@ def compile_markdown(markdown, variable, root, file_path):
                     for i, for_element in enumerate(for_variable):
                         up_content = markdown[
                                      for_match.span()[1] + offset + is_start_line:start_pos + offset - is_end_line]
-                        temp_for_offset = 0
-                        for temp_for_match in re.finditer(for_variable_pattern, up_content):
-                            temp_for_variable_key = temp_for_match.group()[6:-5].strip()
-                            if temp_for_variable_key in for_element:
-                                temp_for_up_content = str(for_element[temp_for_variable_key])
-                                temp_for_start_pos, temp_for_end_pos = temp_for_match.span()
-                                up_content = up_content[
-                                             :temp_for_start_pos + temp_for_offset] + temp_for_up_content + up_content[
-                                                                                                            temp_for_end_pos + temp_for_offset:]
-                                temp_for_offset += len(temp_for_up_content) - len(temp_for_match.group())
                         _variable = {**variable, **for_element}
                         up_content = compile_markdown(up_content, _variable, root, file_path)
                         total_up_content += up_content
-                        if is_end_line and i != len(for_variable) - 1:
+                        if is_end_line and up_content and i != len(for_variable) - 1:
                             total_up_content += "\n"
                     start_pos = for_match.span()[0]
                     end_pos = end_pos
@@ -233,7 +266,7 @@ def compile_file_or_dir(path, name="build.md"):
         markdown = load_markdown(file_path)
         variable = load_variable(file_path)
         root = str(path.parent)
-        syntax_check(markdown, variable, root, file_path)
+        syntax_check(markdown, copy.deepcopy(variable), root, file_path)
         res = compile_markdown(markdown, variable, root, file_path)
         build_dir = path.parent.joinpath("dist")
         if not build_dir.exists():
@@ -247,7 +280,7 @@ def compile_file_or_dir(path, name="build.md"):
         log("[FileNotFoundError]: " + str(e))
         return
     except JSONDecodeError as e:
-        msg = f"[JSONDecodeError] \nposition: from \"{os.path.realpath(filter_path(file_path))}.md\nmsg: " + str(e)
+        msg = f"[JSONDecodeError] \nposition: from \"{os.path.realpath(filter_path(file_path))}.json\nmsg: " + str(e)
         log(msg)
         return
 
