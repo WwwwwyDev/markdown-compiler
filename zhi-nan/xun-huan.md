@@ -22,11 +22,8 @@ layout:
 {% code title="main.json" %}
 ```json
 {
-    "variable1": "hello",
-    "variable2": "world",
-    "is_show": true,
-    "is_show2": false,
-    "loop": [{"name": "content1"},{"name": "content2"},{"name": "content3"}]
+    "variable": "hello world",
+    "loop": [{"name": "content1", "is_show":true},{"name": "content2","is_show": false},{"name": "content3", "is_show": true}],
 }
 ```
 {% endcode %}
@@ -40,9 +37,9 @@ layout:
 {% code title="main.md" %}
 ```markdown
 <!--{for-loop}-->
+# <!--{v-name}-->
 <!--{if-is_show}-->
-# <!--{{name}}-->
-<!--{v-variable1}--><!--{if-is_show2}--> : <!--{v-variable2}--><!--{end}-->
+hello world
 <!--{end}-->
 <!--{end}-->
 ```
@@ -53,10 +50,10 @@ layout:
 {% code title="dist/build.md" %}
 ```markdown
 # content1
-hello
+hello world
 # content2
-hello
+
 # content3
-hello
+hello world
 ```
 {% endcode %}
