@@ -32,13 +32,15 @@ layout:
 
 ### 使用条件判断
 
-在markdown文件中使用条件判断，需要以 "if-" 指令开头，并且以\<!--{end}-->结尾
+在markdown文件中使用条件判断，需要以 "if-" 或者"ifn-"指令开头，并且以\<!--{end}-->结尾
+
+注："ifn-"即将对应变量逻辑取反
 
 {% code title="main.md" %}
 ```markdown
 <!--{if-is_show}-->
 # variable
-<!--{v-variable1}--><!--{if-is_show2}--> : <!--{v-variable2}--><!--{end}-->
+<!--{v-variable1}--><!--{ifn-is_show2}--> : <!--{v-variable2}--><!--{end}-->
 <!--{end}-->
 ```
 {% endcode %}
@@ -48,6 +50,6 @@ layout:
 {% code title="dist/build.md" %}
 ```markdown
 # variable
-hello
+hello : world
 ```
 {% endcode %}

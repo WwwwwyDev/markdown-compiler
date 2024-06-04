@@ -23,16 +23,18 @@ layout:
 ```json
 {
     "variable": "hello world",
-    "loop": [{"name": "content1", "is_show":true},{"name": "content2","is_show": false},{"name": "content3", "is_show": true}],
+    "loop": [{"name": "content1", "is_show":true},{"name": "content2","is_show": false},{"name": "content3", "is_show": true}]
 }
 ```
 {% endcode %}
 
 ### 使用循环
 
-在markdown文件中使用条件判断，需要以 "for-" 指令开头，并且以\<!--{end}-->结尾
+在markdown文件中使用循环，需要以 "for-" 或者"forn-"指令开头，并且以\<!--{end}-->结尾
 
-通过\<!--\{v-your\_prop\}-->或者\<!--\{if-your\_prop\}-->或者\<!--\{for-your\_prop\}-->可以解析循环中的局部变量
+通过\<!--{v-your\_prop}-->或者\<!--{if-your\_prop}-->或者\<!--{for-your\_prop}-->可以解析循环中的局部变量
+
+注："forn-"后接一个整数，表示循环次数
 
 {% code title="main.md" %}
 ```markdown
@@ -41,6 +43,10 @@ layout:
 <!--{if-is_show}-->
 hello world
 <!--{end}-->
+<!--{end}-->
+
+<!--{forn-6}-->
+hello world
 <!--{end}-->
 ```
 {% endcode %}
@@ -54,6 +60,13 @@ hello world
 # content2
 
 # content3
+hello world
+
+hello world
+hello world
+hello world
+hello world
+hello world
 hello world
 ```
 {% endcode %}
