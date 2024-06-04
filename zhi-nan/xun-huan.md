@@ -32,7 +32,7 @@ layout:
 
 在markdown文件中使用条件判断，需要以 "for-" 指令开头，并且以\<!--{end}-->结尾
 
-通过\<!--\{{your\_prop\}}-->，可以解析循环中的局部变量
+通过\<!--\{v-your\_prop\}-->或者\<!--\{if-your\_prop\}-->或者\<!--\{for-your\_prop\}-->可以解析循环中的局部变量
 
 {% code title="main.md" %}
 ```markdown
