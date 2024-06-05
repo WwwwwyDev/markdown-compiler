@@ -1,5 +1,5 @@
 ---
-description: mkdc命令可以帮助你创建项目以及编译项目
+description: The `mkdc` command can help you create a project and compile it.
 layout:
   title:
     visible: true
@@ -13,35 +13,35 @@ layout:
     visible: true
 ---
 
-# 编译工具
+# Command line tools
 
 ### mkdc
 
 ```shell
-# 使用-h查看帮助文档
+# Use `-h` to view the help documentation.
 mkdc -h 
-# 使用-v查看当前版本号
+# Use `-v` to view the current version number.
 mkdc -v
 ```
 
 ### init子命令
 
 ```sh
-# 使用-h查看帮助文档
+# Use -h to see the help document.
 mkdc init -h
-# 使用init初始化项目，内含一个初始化模版
+# Use `init` to initialize the project, which includes an initialization template.
 mkdc init your_project_path
 ```
 
 ### build子命令
 
 ```sh
-# 使用-h查看帮助文档
+# Use `-h` to view the help document.
 mkdc build -h
-# 使用build编译你的项目，以项目目录下的main.md作为入口，会在项目目录下的dist文件夹中，生成一个编译后的build.md文件
+# Use `build` to compile your project, using `main.md` as the entry point in the project directory, and it will generate a compiled `build.md` file in the `dist` folder of the project directory.d文件
 mkdc build your_project_path
-# -n可以指定，编译后的markdown文件名字
+# Use `-n` can be specified to specify the name of the compiled markdown file.
 mkdc build your_project_path -n your_markdown_name
-# 使用build编译你的markdown文件，会将该文件的父级目录作为项目根目录
+# Using `build` to compile your markdown file will set the parent directory of that file as the project root directory.
 mkdc build your_markdown_file.md
 ```
