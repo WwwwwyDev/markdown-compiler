@@ -1,7 +1,7 @@
 # Table of contents
 
 * [概述](README.md)
-* [编译工具](bian-yi-gong-ju.md)
+* [命令行工具](bian-yi-gong-ju.md)
 * [指南](zhi-nan/README.md)
   * [文件规则](zhi-nan/wen-jian-gui-ze.md)
   * [变量](zhi-nan/bian-liang.md)
