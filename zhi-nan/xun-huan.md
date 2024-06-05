@@ -28,7 +28,7 @@ Define a loop variable in the JSON file, which should be of type array\[json]
 ```
 {% endcode %}
 
-### 使用循环
+### use loop
 
 To use loops in a markdown file, it is necessary to start with the "for-" or "forn-" directive and start with "<--- {end}--->" end.
 
