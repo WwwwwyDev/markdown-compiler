@@ -1,5 +1,5 @@
 ---
-description: 可以使用v指令使用变量
+description: You can use the 'v' directive to use variables.
 layout:
   title:
     visible: true
@@ -13,11 +13,11 @@ layout:
     visible: true
 ---
 
-# 变量
+# Variable
 
-### 定义变量
+### define variables
 
-在json文件中定义变量
+Define variables in the JSON file
 
 {% code title="main.json" %}
 ```json
@@ -28,9 +28,9 @@ layout:
 ```
 {% endcode %}
 
-### 使用变量
+### use variables
 
-在markdown文件中使用变量，需要以 "v-" 指令开头
+To use variables in a markdown file, it is necessary to start with the "v -" directive
 
 {% code title="main.md" %}
 ```markdown
@@ -39,7 +39,7 @@ layout:
 ```
 {% endcode %}
 
-### 编译结果
+### compiler results
 
 {% code title="dist/build.md" %}
 ```markdown

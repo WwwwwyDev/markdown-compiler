@@ -1,5 +1,5 @@
 ---
-description: 可以使用if指令进行条件判断
+description: Can use the if instruction for conditional judgment.
 layout:
   title:
     visible: true
@@ -13,11 +13,11 @@ layout:
     visible: true
 ---
 
-# 条件判断
+# Condition
 
-### 定义条件变量
+### define conditional variables
 
-在json文件中定义条件变量，条件变量应为bool类型
+Define conditional variables in the JSON file, which should be of type bool.
 
 {% code title="main.json" %}
 ```json
@@ -30,11 +30,11 @@ layout:
 ```
 {% endcode %}
 
-### 使用条件判断
+### use conditional judgment
 
-在markdown文件中使用条件判断，需要以 "if-" 或者"ifn-"指令开头，并且以\<!--{end}-->结尾
+To use conditional judgment in a markdown file, it needs to start with the "if -" or "if n -" directive and start with \<-- {end}-- >End.
 
-注："ifn-"指令会将对应变量逻辑取反
+Note: The "ifn -" instruction will logically invert the corresponding variable.
 
 {% code title="main.md" %}
 ```markdown
@@ -45,7 +45,7 @@ layout:
 ```
 {% endcode %}
 
-### 编译结果
+### compiler results
 
 {% code title="dist/build.md" %}
 ```markdown

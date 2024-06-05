@@ -24,16 +24,16 @@ mkdc -h
 mkdc -v
 ```
 
-### init子命令
+### init subcommand
 
 ```sh
-# Use -h to see the help document.
+# Use `-h` to see the help document.
 mkdc init -h
 # Use `init` to initialize the project, which includes an initialization template.
 mkdc init your_project_path
 ```
 
-### build子命令
+### build subcommand
 
 ```sh
 # Use `-h` to view the help document.

@@ -12,6 +12,6 @@ layout:
     visible: true
 ---
 
-# 项目
+# project
 
 {% embed url="https://github.com/WwwwwyDev/WwwwwyDev/tree/main/readme" %}

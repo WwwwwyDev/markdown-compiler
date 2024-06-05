@@ -1,5 +1,5 @@
 ---
-description: 可以使用for指令进行循环
+description: You can use the "for" command to loop
 layout:
   title:
     visible: true
@@ -13,11 +13,11 @@ layout:
     visible: true
 ---
 
-# 循环
+# Loop
 
-### 定义循环变量
+### define loop variables
 
-在json文件中定义循环变量，循环变量应为array\[json]类型
+Define a loop variable in the JSON file, which should be of type array\[JSON]
 
 {% code title="main.json" %}
 ```json
@@ -30,11 +30,11 @@ layout:
 
 ### 使用循环
 
-在markdown文件中使用循环，需要以 "for-" 或者"forn-"指令开头，并且以\<!--{end}-->结尾
+To use loops in a markdown file, it is necessary to start with the "for -" or "for n -" directive and start with \<-- {end}-- >End.
 
-循环中的指令均可解析for变量中的局部参数
+Instructions in the loop can all parse local parameters in the for variable.
 
-注："forn-"后接一个整数，表示循环次数
+Note: "forn-" followed by an integer represents the number of cycles
 
 {% code title="main.md" %}
 ```markdown
@@ -51,7 +51,7 @@ hello world
 ```
 {% endcode %}
 
-### 编译结果
+### compiler results
 
 {% code title="dist/build.md" %}
 ```markdown

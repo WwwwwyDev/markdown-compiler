@@ -1,14 +1,14 @@
 ---
-description: 可以使用import指令导入另一个文件的内容
+description: You can use the import command to import the content of another file.
 ---
 
-# 导入
+# Import
 
-### 导入文件
+### import file
 
-在markdown文件中导入另一个文件，需要以 "import-" 指令开头。import指令必须单独一行
+To import another file in the markdown file, it needs to start with the "import -" directive. The import directive must be on a separate line.
 
-$root为项目根目录，你也可以使用相对路径或者绝对路径的写法
+$root is the root directory of the project, and you can also use relative or absolute path notation.
 
 
 
@@ -54,7 +54,7 @@ $root为项目根目录，你也可以使用相对路径或者绝对路径的写
 {% endtab %}
 {% endtabs %}
 
-### 编译结果
+### compiler results
 
 {% code title="dist/build.md" %}
 ```markdown

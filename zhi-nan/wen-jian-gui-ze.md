@@ -12,9 +12,9 @@ layout:
     visible: true
 ---
 
-# 文件规则
+# File rules
 
-markdown对应其相同名字的json文件，当编译时，会在json文件中寻找变量，如果没有定义json文件，则认为该markdown文件不存在变量。在一个项目中，会将main.md作为编译的入口文件。
+Markdown corresponds to a JSON file with the same name. When compiling, variables are searched in the JSON file. If a JSON file is not defined, it is considered that there are no variables in the Markdown file. In a project, main.md will be used as the entry file for compilation.
 
 {% tabs %}
 {% tab title="main.md" %}
@@ -38,9 +38,9 @@ markdown对应其相同名字的json文件，当编译时，会在json文件中�
 {% endtab %}
 {% endtabs %}
 
-### 指令
+### command
 
-所有指令都要以"\<!--{"开头，以"}-->"结尾
+All instructions must start with "\<! -- {" and end with "} -->".
 
 ```markdown
 <!--{v-your_variable}-->
