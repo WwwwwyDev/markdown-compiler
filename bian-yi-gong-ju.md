@@ -1,5 +1,5 @@
 ---
-description: The `mkdc` command can help you create a project and compile it.
+description: The "mkdc" command can help you create a project and compile it.
 layout:
   title:
     visible: true

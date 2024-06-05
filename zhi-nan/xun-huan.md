@@ -17,7 +17,7 @@ layout:
 
 ### define loop variables
 
-Define a loop variable in the JSON file, which should be of type array\[JSON]
+Define a loop variable in the JSON file, which should be of type array\[json]
 
 {% code title="main.json" %}
 ```json
@@ -30,7 +30,7 @@ Define a loop variable in the JSON file, which should be of type array\[JSON]
 
 ### 使用循环
 
-To use loops in a markdown file, it is necessary to start with the "for -" or "for n -" directive and start with \<-- {end}-- >End.
+To use loops in a markdown file, it is necessary to start with the "for-" or "forn-" directive and start with "<--- {end}--->" end.
 
 Instructions in the loop can all parse local parameters in the for variable.
 

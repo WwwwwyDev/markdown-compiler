@@ -1,5 +1,5 @@
 ---
-description: Can use the if instruction for conditional judgment.
+description: Can use the "if" command for conditional judgment.
 layout:
   title:
     visible: true
@@ -32,7 +32,7 @@ Define conditional variables in the JSON file, which should be of type bool.
 
 ### use conditional judgment
 
-To use conditional judgment in a markdown file, it needs to start with the "if -" or "if n -" directive and start with \<-- {end}-- >End.
+To use conditional judgment in a markdown file, it needs to start with the "if -" or "if n -" directive and start with "<--- {end}--->"End.
 
 Note: The "ifn -" instruction will logically invert the corresponding variable.
 

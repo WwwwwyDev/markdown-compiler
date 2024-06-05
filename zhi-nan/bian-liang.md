@@ -1,5 +1,5 @@
 ---
-description: You can use the 'v' directive to use variables.
+description: You can use the "v" command to use variables.
 layout:
   title:
     visible: true

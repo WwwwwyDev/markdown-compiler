@@ -1,16 +1,14 @@
 ---
-description: You can use the import command to import the content of another file.
+description: You can use the "import" command to import the content of another file.
 ---
 
 # Import
 
 ### import file
 
-To import another file in the markdown file, it needs to start with the "import -" directive. The import directive must be on a separate line.
+To import another file in the markdown file, it needs to start with the "import-" directive. The import directive must be on a separate line.
 
 $root is the root directory of the project, and you can also use relative or absolute path notation.
-
-
 
 {% tabs %}
 {% tab title="main.md" %}
