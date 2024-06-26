@@ -38,7 +38,7 @@ mkdc init your_project_path
 ```sh
 # Use `-h` to view the help document.
 mkdc build -h
-# Use `build` to compile your project, using `main.md` as the entry point in the project directory, and it will generate a compiled `build.md` file in the `dist` folder of the project directory.d文件
+# Use `build` to compile your project, using `main.md` as the entry point in the project directory, and it will generate a compiled `build.md` file in the `dist` folder of the project directory
 mkdc build your_project_path
 # Use `-n` can be specified to specify the name of the compiled markdown file.
 mkdc build your_project_path -n your_markdown_name
